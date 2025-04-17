@@ -1,9 +1,16 @@
-package br.com.senai.futurodev.model;
+package br.com.senai.futurodev.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table
 public class Assignee {
@@ -13,21 +20,6 @@ public class Assignee {
     @Column(nullable = false)
     private String name;
     @OneToMany(mappedBy = "assignee")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Task> tasks;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

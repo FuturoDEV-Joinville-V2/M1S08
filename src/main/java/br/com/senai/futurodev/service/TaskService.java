@@ -1,7 +1,7 @@
 package br.com.senai.futurodev.service;
 
-import br.com.senai.futurodev.model.Database;
-import br.com.senai.futurodev.model.Task;
+import br.com.senai.futurodev.model.entity.Task;
+import br.com.senai.futurodev.model.exceptions.ResourceNotFoundException;
 import br.com.senai.futurodev.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,8 +16,15 @@ public class TaskService {
     TaskRepository taskRepository;
 
     //Listar todas as tasks
-    public List<Task> ready(){
+    public List<Task> findAllTasks(){
         return taskRepository.findAll();
+    }
+
+    //Buscar uma task pelo id
+    public Task findTaskById(Long id){
+        return taskRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Task not found with id " + id)
+        );
     }
 
     //Cadastrar a task no banco de dados
@@ -27,20 +34,18 @@ public class TaskService {
 
     //Atualizar uma task
     public Task update(Long id, Task taskUpdate) {
-        Optional<Task> task = taskRepository.findById(id);
-
-        if (task.isPresent()){
-            task.get().setDescription(taskUpdate.getDescription());
-            task.get().setStatus(taskUpdate.getStatus());
-            task.get().setEndDate(taskUpdate.getEndDate());
-            taskRepository.save(task.get());
-        }
-
-        return task.get();
+        Task existingTask = findTaskById(id);
+        existingTask.setDescription(taskUpdate.getDescription());
+        existingTask.setEndDate(taskUpdate.getEndDate());
+        existingTask.setStatus(taskUpdate.getStatus());
+        existingTask.setPriority(taskUpdate.getPriority());
+        existingTask.setAssignee(taskUpdate.getAssignee());
+        return taskRepository.save(existingTask);
     }
 
     //Deletar uma task
     public void delete(Long id){
-        taskRepository.deleteById(id);
+        Task task = findTaskById(id);
+        taskRepository.delete(task);
     }
 }
