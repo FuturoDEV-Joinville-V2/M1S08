@@ -19,6 +19,10 @@ public class Assignee {
     private Long id;
     @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
+    private String email;
+    @Column(nullable = false)
+    private String password;
     @OneToMany(mappedBy = "assignee")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Task> tasks;
